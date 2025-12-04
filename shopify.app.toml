@@ -22,7 +22,19 @@ api_version = "2026-01"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products"
+scopes = "write_products,read_products,read_metaobjects,write_metaobjects,read_metaobject_definitions,write_metaobject_definitions"
+
+# Enable the standard Q&A pair metaobject for FAQs
+[metaobjects]
+standard_metaobjects = ["shopify--qa-pair"]
+
+# Product metafield to store FAQ references
+[product.metafields.app.faqs]
+name = "Product FAQs"
+description = "List of FAQ entries associated with this product"
+type = "list.metaobject_reference<shopify--qa-pair>"
+access.admin = "merchant_read_write"
+access.storefront = "public_read"
 
 [auth]
 redirect_urls = [ "https://example.com/api/auth" ]
