@@ -1,0 +1,10 @@
+{
+  "name": "Age Verification",
+  "heading": "Age Verification",
+  "dateOfBirthLabel": "Date of Birth",
+  "dateOfBirthPlaceholder": "Select date of birth",
+  "submitButton": "Verify Age",
+  "successMessage": "Age verification completed",
+  "errorMessage": "Failed to save verification. Please try again.",
+  "loadingMessage": "Loading..."
+}

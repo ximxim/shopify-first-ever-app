@@ -22,19 +22,35 @@ api_version = "2026-01"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products,read_products,read_metaobjects,write_metaobjects,read_metaobject_definitions,write_metaobject_definitions"
+scopes = "read_metaobject_definitions,read_metaobjects,read_products,write_metaobject_definitions,write_metaobjects,write_orders,write_products"
 
-# Enable the standard Q&A pair metaobject for FAQs
+[auth]
+redirect_urls = [ "https://example.com/api/auth" ]
+
 [metaobjects]
-standard_metaobjects = ["shopify--qa-pair"]
+standard_metaobjects = [ "shopify--qa-pair" ]
 
-# Product metafield to store FAQ references
 [product.metafields.app.faqs]
 name = "Product FAQs"
 description = "List of FAQ entries associated with this product"
 type = "list.metaobject_reference<shopify--qa-pair>"
-access.admin = "merchant_read_write"
-access.storefront = "public_read"
 
-[auth]
-redirect_urls = [ "https://example.com/api/auth" ]
+  [product.metafields.app.faqs.access]
+  admin = "merchant_read_write"
+  storefront = "public_read"
+
+[order.metafields.app.date_of_birth]
+name = "Date of Birth"
+description = "Date of birth associated with the order"
+type = "date"
+
+  [order.metafields.app.date_of_birth.access]
+  admin = "merchant_read_write"
+
+[order.metafields.app.verified_at]
+name = "Verified At"
+description = "Timestamp when the order was verified"
+type = "date"
+
+  [order.metafields.app.verified_at.access]
+  admin = "merchant_read_write"
