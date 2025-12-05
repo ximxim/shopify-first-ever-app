@@ -1,0 +1,219 @@
+<div 
+  id="raffle-modal-container" 
+  class="raffle-modal-container"
+  style="
+    --raffle-bubble-bg: {{ block.settings.bubble_background }};
+    --raffle-bubble-icon: {{ block.settings.bubble_icon_color }};
+    --raffle-bubble-size: {{ block.settings.bubble_size }}px;
+    --raffle-accent: {{ block.settings.accent_color }};
+    --raffle-success: {{ block.settings.success_color }};
+    --raffle-error: {{ block.settings.error_color }};
+  ">
+  <!-- Floating Chat Bubble Button -->
+  <button 
+    id="raffle-bubble" 
+    class="raffle-bubble" 
+    type="button"
+    aria-label="{{ 'raffle.bubble.aria_label' | t }}"
+    aria-expanded="false"
+    aria-controls="raffle-modal"
+  >
+    <svg class="raffle-bubble__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/>
+    </svg>
+    <span class="raffle-bubble__pulse"></span>
+  </button>
+
+  <!-- Modal Overlay -->
+  <div 
+    id="raffle-modal" 
+    class="raffle-modal" 
+    role="dialog" 
+    aria-modal="true" 
+    aria-labelledby="raffle-modal-title"
+    aria-hidden="true"
+  >
+    <div class="raffle-modal__backdrop"></div>
+    
+    <div class="raffle-modal__content">
+      <!-- Close Button -->
+      <button 
+        id="raffle-close" 
+        class="raffle-modal__close" 
+        type="button"
+        aria-label="{{ 'raffle.modal.close' | t }}"
+      >
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <!-- Initial State -->
+      <div id="raffle-initial" class="raffle-modal__state raffle-modal__state--initial">
+        <div class="raffle-modal__icon-wrapper">
+          <svg class="raffle-modal__icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2" fill="none"/>
+            <path d="M32 8L38.18 20.54L52 22.54L42 32.28L44.36 46.02L32 39.52L19.64 46.02L22 32.28L12 22.54L25.82 20.54L32 8Z" fill="currentColor"/>
+          </svg>
+        </div>
+        
+        <h2 id="raffle-modal-title" class="raffle-modal__title">
+          {{ 'raffle.modal.title' | t }}
+        </h2>
+        
+        <p class="raffle-modal__description">
+          {{ 'raffle.modal.description' | t }}
+        </p>
+
+        <button 
+          id="raffle-try-luck" 
+          class="raffle-modal__button raffle-modal__button--primary"
+          type="button"
+        >
+          <span class="raffle-modal__button-text">{{ 'raffle.modal.try_luck' | t }}</span>
+          <span class="raffle-modal__button-spinner" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div id="raffle-loading" class="raffle-modal__state raffle-modal__state--loading" aria-hidden="true">
+        <div class="raffle-modal__loader">
+          <div class="raffle-modal__loader-ring"></div>
+          <div class="raffle-modal__loader-ring"></div>
+          <div class="raffle-modal__loader-ring"></div>
+        </div>
+        <p class="raffle-modal__loading-text">{{ 'raffle.modal.spinning' | t }}</p>
+      </div>
+
+      <!-- Success State -->
+      <div id="raffle-success" class="raffle-modal__state raffle-modal__state--success" aria-hidden="true">
+        <div class="raffle-modal__confetti" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        
+        <div class="raffle-modal__icon-wrapper raffle-modal__icon-wrapper--success">
+          <svg class="raffle-modal__icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2" fill="none"/>
+            <path d="M20 32L28 40L44 24" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        
+        <h2 class="raffle-modal__title raffle-modal__title--success">
+          {{ 'raffle.modal.congratulations' | t }}
+        </h2>
+        
+        <div class="raffle-modal__discount">
+          <span class="raffle-modal__discount-value" id="raffle-discount-value">0</span>
+          <span class="raffle-modal__discount-symbol">%</span>
+          <span class="raffle-modal__discount-label">{{ 'raffle.modal.discount_label' | t }}</span>
+        </div>
+        
+        <p class="raffle-modal__success-message">
+          {{ 'raffle.modal.success_message' | t }}
+        </p>
+
+        <button 
+          id="raffle-continue" 
+          class="raffle-modal__button raffle-modal__button--secondary"
+          type="button"
+        >
+          {{ 'raffle.modal.continue_shopping' | t }}
+        </button>
+      </div>
+
+      <!-- Error State -->
+      <div id="raffle-error" class="raffle-modal__state raffle-modal__state--error" aria-hidden="true">
+        <div class="raffle-modal__icon-wrapper raffle-modal__icon-wrapper--error">
+          <svg class="raffle-modal__icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2" fill="none"/>
+            <path d="M32 20V36M32 44V44.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        
+        <h2 class="raffle-modal__title raffle-modal__title--error">
+          {{ 'raffle.modal.error_title' | t }}
+        </h2>
+        
+        <p class="raffle-modal__error-message">
+          {{ 'raffle.modal.error_message' | t }}
+        </p>
+
+        <button 
+          id="raffle-retry" 
+          class="raffle-modal__button raffle-modal__button--primary"
+          type="button"
+        >
+          {{ 'raffle.modal.try_again' | t }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.RaffleModalConfig = {
+    proxyUrl: '/apps/raffle',
+    cartUpdateUrl: '{{ routes.cart_update_url }}'
+  };
+</script>
+
+{% schema %}
+{
+  "name": "Raffle Modal",
+  "target": "body",
+  "javascript": "raffle.js",
+  "stylesheet": "raffle.css",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Bubble Settings"
+    },
+    {
+      "type": "color",
+      "id": "bubble_background",
+      "label": "Bubble Background Color",
+      "default": "#6366f1"
+    },
+    {
+      "type": "color",
+      "id": "bubble_icon_color",
+      "label": "Bubble Icon Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "bubble_size",
+      "label": "Bubble Size",
+      "min": 48,
+      "max": 80,
+      "step": 4,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Modal Settings"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color",
+      "default": "#6366f1"
+    },
+    {
+      "type": "color",
+      "id": "success_color",
+      "label": "Success Color",
+      "default": "#22c55e"
+    },
+    {
+      "type": "color",
+      "id": "error_color",
+      "label": "Error Color",
+      "default": "#ef4444"
+    }
+  ]
+}
+{% endschema %}
+

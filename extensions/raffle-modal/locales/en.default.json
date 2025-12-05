@@ -1,0 +1,29 @@
+{
+  "ratings": {
+    "stars": {
+      "label": "Ratings"
+    },
+    "home": {
+      "recommendationText": "Recommended Product!"
+    }
+  },
+  "raffle": {
+    "bubble": {
+      "aria_label": "Open lucky discount raffle"
+    },
+    "modal": {
+      "close": "Close",
+      "title": "Try your luck!",
+      "description": "Spin the wheel of fortune and win a discount between 5% and 10% off your order. One try per session!",
+      "try_luck": "Try my luck!",
+      "spinning": "Spinning the wheel...",
+      "congratulations": "Congratulations!",
+      "discount_label": "OFF",
+      "success_message": "Your discount has been applied to your cart. Continue shopping and enjoy your savings!",
+      "continue_shopping": "Continue shopping",
+      "error_title": "Oops!",
+      "error_message": "Something went wrong. Please try again.",
+      "try_again": "Try again"
+    }
+  }
+}
