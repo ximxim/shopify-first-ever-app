@@ -1,0 +1,4 @@
+{
+  "name": "Raffle Discount Function",
+  "description": "Applies a percentage discount based on the raffle_discount_amount cart attribute"
+}

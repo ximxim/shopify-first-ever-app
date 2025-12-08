@@ -1,0 +1,14 @@
+query CartInput {
+  cart {
+    attribute(key: "raffle_discount_amount") {
+      key
+      value
+    }
+    lines {
+      id
+    }
+  }
+  discount {
+    discountClasses
+  }
+}

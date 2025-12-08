@@ -9,8 +9,126 @@ import { useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 
+const RAFFLE_DISCOUNT_TITLE = "Raffle Discount";
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await authenticate.admin(request);
+  const { admin } = await authenticate.admin(request);
+
+  // First, get the deployed functions to find our raffle discount function ID
+  const functionsResponse = await admin.graphql(
+    `#graphql
+    query GetShopifyFunctions {
+      shopifyFunctions(first: 25) {
+        nodes {
+          id
+          title
+          apiType
+        }
+      }
+    }`
+  );
+
+  const functionsJson = await functionsResponse.json();
+  const functions = functionsJson.data?.shopifyFunctions?.nodes || [];
+
+  // Find our raffle discount function by looking for discount functions
+  // The function title comes from the locales/en.default.json or extension name
+  const raffleFunction = functions.find(
+    (fn: { id: string; title: string; apiType: string }) =>
+      fn.apiType === "discount" &&
+      fn.title.toLowerCase().includes("raffle")
+  );
+
+  if (!raffleFunction) {
+    console.log(
+      "Raffle discount function not found. Make sure the function is deployed. Available functions:",
+      functions.map((f: { title: string; apiType: string }) => ({
+        title: f.title,
+        apiType: f.apiType,
+      }))
+    );
+    return null;
+  }
+
+  // Check if the raffle discount is already registered
+  const existingDiscountResponse = await admin.graphql(
+    `#graphql
+    query GetRaffleDiscount {
+      automaticDiscountNodes(first: 10, query: "title:Raffle Discount") {
+        nodes {
+          id
+          automaticDiscount {
+            ... on DiscountAutomaticApp {
+              title
+              appDiscountType {
+                functionId
+              }
+            }
+          }
+        }
+      }
+    }`
+  );
+
+  const existingDiscountJson = await existingDiscountResponse.json();
+  const existingDiscounts =
+    existingDiscountJson.data?.automaticDiscountNodes?.nodes || [];
+
+  // Check if our function is already registered
+  const isAlreadyRegistered = existingDiscounts.some((node: any) => {
+    const discount = node.automaticDiscount;
+    return (
+      discount?.title === RAFFLE_DISCOUNT_TITLE &&
+      discount?.appDiscountType?.functionId === raffleFunction.id
+    );
+  });
+
+  if (!isAlreadyRegistered) {
+    // Register the discount function using the actual function ID
+    const createDiscountResponse = await admin.graphql(
+      `#graphql
+      mutation CreateRaffleDiscount($automaticAppDiscount: DiscountAutomaticAppInput!) {
+        discountAutomaticAppCreate(automaticAppDiscount: $automaticAppDiscount) {
+          automaticAppDiscount {
+            discountId
+            title
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }`,
+      {
+        variables: {
+          automaticAppDiscount: {
+            title: RAFFLE_DISCOUNT_TITLE,
+            functionId: raffleFunction.id,
+            discountClasses: ["ORDER"],
+            startsAt: new Date().toISOString(),
+            combinesWith: {
+              orderDiscounts: true,
+              productDiscounts: true,
+              shippingDiscounts: true,
+            },
+          },
+        },
+      }
+    );
+
+    const createDiscountJson = await createDiscountResponse.json();
+    const userErrors =
+      createDiscountJson.data?.discountAutomaticAppCreate?.userErrors || [];
+
+    if (userErrors.length > 0) {
+      console.error("Failed to register raffle discount:", userErrors);
+    } else {
+      console.log(
+        "Raffle discount registered:",
+        createDiscountJson.data?.discountAutomaticAppCreate?.automaticAppDiscount
+      );
+    }
+  }
 
   return null;
 };
