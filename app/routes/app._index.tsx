@@ -350,6 +350,12 @@ export default function Index() {
             </s-link>
           </s-list-item>
           <s-list-item>
+            Configure your{" "}
+            <s-link href="/app/analytics">
+              analytics pixel
+            </s-link>
+          </s-list-item>
+          <s-list-item>
             Build an{" "}
             <s-link
               href="https://shopify.dev/docs/apps/getting-started/build-app-example"
