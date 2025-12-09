@@ -344,6 +344,12 @@ export default function Index() {
       <s-section slot="aside" heading="Next steps">
         <s-unordered-list>
           <s-list-item>
+            Customize your{" "}
+            <s-link href="/app/branding">
+              checkout branding
+            </s-link>
+          </s-list-item>
+          <s-list-item>
             Build an{" "}
             <s-link
               href="https://shopify.dev/docs/apps/getting-started/build-app-example"
